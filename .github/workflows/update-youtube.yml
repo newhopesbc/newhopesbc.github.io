@@ -1,0 +1,88 @@
+
+name: Update YouTube Videos
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 12 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest YouTube streams
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+          from urllib.parse import urlencode
+
+          key = os.environ["YOUTUBE_API_KEY"]
+          base = "https://www.googleapis.com/youtube/v3/"
+
+          def get(endpoint, params):
+              params["key"] = key
+              url = base + endpoint + "?" + urlencode(params)
+              with urllib.request.urlopen(url, timeout=30) as response:
+                  return json.load(response)
+
+          channel = get("channels", {
+              "part": "id",
+              "forHandle": "newhopebaptistchurch2638"
+          })
+          items = channel.get("items", [])
+          if not items:
+              raise RuntimeError("YouTube channel not found")
+
+          channel_id = items[0]["id"]
+          result = get("search", {
+              "part": "snippet",
+              "channelId": channel_id,
+              "type": "video",
+              "eventType": "completed",
+              "order": "date",
+              "maxResults": 5
+          })
+
+          videos = []
+          for item in result.get("items", []):
+              video_id = item.get("id", {}).get("videoId")
+              if not video_id:
+                  continue
+              snippet = item["snippet"]
+              videos.append({
+                  "id": video_id,
+                  "title": snippet["title"],
+                  "publishedAt": snippet["publishedAt"],
+                  "thumbnail": snippet["thumbnails"].get(
+                      "high", snippet["thumbnails"]["default"]
+                  )["url"]
+              })
+
+          if not videos:
+              raise RuntimeError("No completed livestreams found")
+
+          Path("videos.json").write_text(
+              json.dumps(videos, ensure_ascii=False, indent=2),
+              encoding="utf-8"
+          )
+          print(f"Saved {len(videos)} videos")
+          PY
+
+      - name: Commit updated videos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update YouTube videos"
+            git push
+          fi
