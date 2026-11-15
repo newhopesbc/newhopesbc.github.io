@@ -4,7 +4,8 @@ name: Update YouTube Videos
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 12 * * *'
+    - cron: '0 14,17 * * 0'
+      timezone: 'America/Indiana/Indianapolis'
 
 permissions:
   contents: write
