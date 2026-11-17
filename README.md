@@ -5,5 +5,3 @@ Address: 2240 E 106th Street, Carmel, IN 46032
 
 Upload index.html and assets to GitHub Pages. Keep existing videos.json.
 Workflow updates videos on Sundays at 2 PM and 5 PM Indianapolis time (subject to GitHub scheduling delays).
-
-V10: Added Facebook Page timeline section between sermons and visit; existing V8 assets and YouTube workflow retained.
