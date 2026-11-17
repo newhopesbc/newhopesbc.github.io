@@ -1,4 +1,4 @@
-"""Sync up to 24 consent-cleared church photos from a Google Drive folder."""
+"""Sync church photos from a Google Drive folder for paginated display."""
 import io
 import json
 import os
@@ -10,7 +10,6 @@ from google.oauth2 import service_account
 from PIL import Image, ImageOps
 
 FOLDER_ID = '1VkU0ARAWvaTCJ2gwUrw5I_INg_iScaVA'
-MAX_IMAGES = 24
 OUT = Path('assets/gallery')
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -40,13 +39,13 @@ while True:
     data = response.json()
     photos.extend(data.get('files', []))
     token = data.get('nextPageToken')
-    if not token or len(photos) >= MAX_IMAGES:
+    if not token:
         break
 
 if not photos:
     raise RuntimeError('No photos visible to service account. Check folder sharing and files.')
 
-photos = sorted(photos, key=lambda x: x.get('createdTime', ''), reverse=True)[:MAX_IMAGES]
+photos = sorted(photos, key=lambda x: x.get('createdTime', ''), reverse=True)
 manifest = []
 for photo in photos:
     fid = photo['id']

@@ -1,0 +1,11 @@
+새소망침례교회 V13 전체 업로드 안내
+
+1. 이 ZIP을 PC에 다운로드하고 압축을 풉니다.
+2. GitHub 저장소 https://github.com/newhopesbc/newhopesbc.github.io 의 Code 탭으로 이동합니다.
+3. Add file > Upload files를 클릭합니다.
+4. 압축을 푼 폴더 안의 파일 및 하위 폴더를 업로드합니다. ZIP 자체를 업로드하면 홈페이지가 적용되지 않습니다.
+5. Commit changes를 클릭합니다.
+6. 기존 gallery.json, assets/gallery 사진, videos.json, CNAME은 삭제하지 마세요.
+7. Actions에서 Update Google Drive Gallery를 수동 실행하면 새 사진이 동기화됩니다.
+
+주의: 기존 .github/workflows/update-drive-gallery.yml 이 GitHub에 이미 있으면 동일한 이름으로 덮어쓰세요. 기존 update-youtube.yml은 유지합니다.
