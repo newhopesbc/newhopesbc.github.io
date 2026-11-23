@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install google-auth requests Pillow
+        run: pip install google-api-python-client google-auth requests pillow pillow-heif
 
       - name: Sync Google Drive photos
         env:
