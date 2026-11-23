@@ -1,0 +1,11 @@
+V14 기반 통합 업데이트
+- 예배 영상: 최신 5개, 안내 문구 수정 (한/영)
+- 모든 페이지 하단 연도와 디자인 시안 문구 제거
+- 기존 V14 갤러리 표시/6장씩 페이지 전환 유지
+- Drive 동기화: 이미지 MIME 전체 검색, HEIC 지원, 누락 시 로그 오류 표시
+
+GitHub 저장소 루트에 ZIP 안의 파일/폴더를 업로드하세요.
+중요: GitHub에 이미 있는 gallery.json, videos.json, assets/gallery/ 사진, CNAME, GitHub Secrets를 삭제하지 마세요.
+업로드 후 Actions > Update Google Drive Gallery > Run workflow를 실행하세요.
+Drive 사진 8장 모두 서비스 계정에 보이는 경우, gallery.json에 8개가 생성되고 2페이지가 나타납니다.
+동기화가 실패하면 Actions 로그에서 Google Drive returned N image files 및 Skipping... 메시지를 확인하세요.

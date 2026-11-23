@@ -8,6 +8,9 @@ from pathlib import Path
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 from PIL import Image, ImageOps
+from pillow_heif import register_heif_opener
+
+register_heif_opener()
 
 FOLDER_ID = '1VkU0ARAWvaTCJ2gwUrw5I_INg_iScaVA'
 OUT = Path('assets/gallery')
@@ -25,7 +28,7 @@ photos = []
 token = None
 while True:
     params = {
-        'q': f"'{FOLDER_ID}' in parents and trashed = false and (mimeType = 'image/jpeg' or mimeType = 'image/png' or mimeType = 'image/webp' or mimeType = 'image/heic')",
+        'q': f"'{FOLDER_ID}' in parents and trashed = false and mimeType contains 'image/'",
         'fields': 'nextPageToken,files(id,name,mimeType,createdTime)',
         'pageSize': 100,
         'orderBy': 'createdTime desc',
@@ -45,6 +48,7 @@ while True:
 if not photos:
     raise RuntimeError('No photos visible to service account. Check folder sharing and files.')
 
+print(f'Google Drive returned {len(photos)} image files')
 photos = sorted(photos, key=lambda x: x.get('createdTime', ''), reverse=True)
 manifest = []
 for photo in photos:
@@ -69,6 +73,8 @@ for photo in photos:
 
 if not manifest:
     raise RuntimeError('No supported images could be converted.')
+if len(manifest) != len(photos):
+    raise RuntimeError(f'Only {len(manifest)} of {len(photos)} Drive photos converted. Existing gallery preserved; check logs for skipped files.')
 keep = {Path(item['file']).name for item in manifest}
 for existing in OUT.glob('*.jpg'):
     if existing.name not in keep:
